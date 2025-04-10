@@ -1,0 +1,11 @@
+langchain-community
+langchain-core
+langchain
+tiktoken
+beautifulsoup4
+chromadb
+langchain-ollama
+certifi
+autogen
+ollama
+-e .
