@@ -39,15 +39,29 @@ def initialize_starbot():
 
     if not initialized:
         try:
+            # Log all environment variables for debugging (excluding sensitive values)
+            logger.info("Server environment variables:")
+            for key, value in os.environ.items():
+                if key in ["OPENAI_API_KEY", "DEEPSEEK_API_KEY"]:
+                    value_preview = value[:5] + "..." if value else "None"
+                    logger.info(f"  {key}: {value_preview}")
+                elif key.lower() in ["llm_provider", "deepseek_model", "openai_model", "port"]:
+                    logger.info(f"  {key}: {value}")
+
             # Import the LLM provider and data retriever
+            logger.info("Importing modules...")
             from llm_providers import get_llm_provider
             from data_retrieval import DataRetriever
+            logger.info("Modules imported successfully")
 
             # Get the LLM provider type from environment variable or default to "mock"
             provider_type = os.environ.get("LLM_PROVIDER", "mock")
+            logger.info(f"Selected provider type from environment: {provider_type}")
 
             # Initialize the LLM provider
+            logger.info(f"Getting LLM provider for type: {provider_type}")
             llm_provider = get_llm_provider(provider_type)
+            logger.info("Initializing LLM provider...")
             provider_initialized = llm_provider.initialize()
 
             if not provider_initialized:
@@ -57,6 +71,7 @@ def initialize_starbot():
                 provider_type = "mock"
 
             # Initialize the data retriever
+            logger.info("Initializing data retriever...")
             data_retriever = DataRetriever()
             data_retriever.initialize()
 
@@ -65,6 +80,9 @@ def initialize_starbot():
 
         except Exception as e:
             logger.error(f"Error initializing StarBot: {e}")
+            logger.error(f"Error type: {type(e).__name__}")
+            import traceback
+            logger.error(f"Traceback: {traceback.format_exc()}")
             # Import the mock provider as fallback
             from llm_providers import MockProvider
             llm_provider = MockProvider()

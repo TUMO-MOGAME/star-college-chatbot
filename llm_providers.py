@@ -247,6 +247,11 @@ class DeepSeekProvider(BaseLLMProvider):
     def initialize(self) -> bool:
         """Initialize the DeepSeek provider"""
         try:
+            # Log the API key (first 5 chars only for security)
+            api_key_preview = self.api_key[:5] + '...' if self.api_key else None
+            logger.info(f"Attempting to initialize DeepSeek provider with API key starting with: {api_key_preview}")
+            logger.info(f"Using model: {self.model}")
+
             if not self.api_key:
                 logger.error("DeepSeek API key not provided")
                 return False
@@ -254,12 +259,29 @@ class DeepSeekProvider(BaseLLMProvider):
             # Import required modules
             try:
                 import requests
+                logger.info("Successfully imported requests module")
 
                 # Test the API key with a simple request
                 headers = {
                     "Authorization": f"Bearer {self.api_key}",
                     "Content-Type": "application/json"
                 }
+
+                # Make a simple test request to verify the API key
+                try:
+                    logger.info("Testing DeepSeek API connection...")
+                    test_url = "https://api.deepseek.com/v1/models"
+                    test_response = requests.get(test_url, headers=headers)
+
+                    if test_response.status_code == 200:
+                        logger.info("DeepSeek API connection successful!")
+                    else:
+                        logger.error(f"DeepSeek API test failed with status code: {test_response.status_code}")
+                        logger.error(f"Response: {test_response.text}")
+                        return False
+                except Exception as e:
+                    logger.error(f"Error testing DeepSeek API: {e}")
+                    return False
 
                 # Initialize as successful
                 self.initialized = True
@@ -344,11 +366,26 @@ def get_llm_provider(provider_type: str = None) -> BaseLLMProvider:
     """Get an LLM provider based on the specified type"""
     provider_type = provider_type or os.environ.get("LLM_PROVIDER", "mock")
 
+    # Log all environment variables for debugging (excluding sensitive values)
+    logger.info("Environment variables:")
+    for key, value in os.environ.items():
+        if key in ["OPENAI_API_KEY", "DEEPSEEK_API_KEY"]:
+            value_preview = value[:5] + "..." if value else "None"
+            logger.info(f"  {key}: {value_preview}")
+        elif key.lower() in ["llm_provider", "deepseek_model", "openai_model"]:
+            logger.info(f"  {key}: {value}")
+
+    logger.info(f"Selected provider type: {provider_type}")
+
     if provider_type.lower() == "openai":
+        logger.info("Creating OpenAI provider")
         return OpenAIProvider()
     elif provider_type.lower() == "deepseek":
+        logger.info("Creating DeepSeek provider")
         return DeepSeekProvider()
     elif provider_type.lower() == "ollama":
+        logger.info("Creating Ollama provider")
         return OllamaProvider()
     else:
+        logger.info(f"Creating Mock provider (unknown type: {provider_type})")
         return MockProvider()
