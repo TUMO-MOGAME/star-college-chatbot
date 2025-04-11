@@ -42,6 +42,10 @@ To deploy the interactive version that can answer any question about Star Colleg
    - **Runtime**: Python 3.9
    - **Build Command**: `pip install -r requirements-server.txt`
    - **Start Command**: `gunicorn star_college_server:app`
+   - **Environment Variables**:
+     - `LLM_PROVIDER`: Set to `openai`, `deepseek`, or `ollama` (default is `mock`)
+     - `OPENAI_API_KEY`: Your OpenAI API key (if using OpenAI)
+     - `DEEPSEEK_API_KEY`: Your DeepSeek API key (if using DeepSeek)
 5. Click "Create Web Service"
 
 ### Interactive Version (Railway.app)
@@ -74,7 +78,10 @@ The static demo uses:
 
 The interactive version uses:
 - Flask backend with Python
-- Ollama for local LLM inference
-- LangChain for document retrieval and question answering
-- ChromaDB for vector storage
+- Multiple LLM provider options:
+  - OpenAI API for cloud-based inference
+  - DeepSeek API for high-quality open models
+  - Ollama for local LLM inference
+  - Mock mode for fallback with pre-defined answers
 - Web scraping of Star College Durban website for data
+- Simple but effective keyword-based search for relevant context
