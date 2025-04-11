@@ -203,11 +203,15 @@ class MockProvider(BaseLLMProvider):
         super().__init__()
         self.initialized = True
         self.answers = {
-            "what is star college durban": "Star College Durban is an Independent, English Medium School established by Horizon Educational Trust. It follows the curriculum from the Department of Education and aims to be academically strong, producing excellent results in the National Matric exams as well as National and International Mathematics, Science and Computer Olympiads.",
-            "what is the mission of star college": "The mission of Star College is to enable all students to become the best possible version of themselves. They provide an environment where children develop into empathetic, self-directed, critical thinkers who do not give up when faced with challenges. Additionally, they aim to be academically strong and produce excellent results in various national and international exams and competitions.",
-            "where is star college located": "Star College Durban is located at 20 Kinloch Avenue, Westville North 3630, Durban, South Africa.",
-            "how can i contact star college": "You can contact Star College Durban via their phone number which is +27 31 262 71 91 or through email at starcollege@starcollege.co.za. They also have a presence on social media platforms such as Facebook, Instagram, Twitter, LinkedIn, and YouTube.",
-            "what programs does star college offer": "Based on the available information, Star College offers education for primary school (Little Dolphin Star and Pre-Primary School), as well as separate high schools for boys and girls. They follow the curriculum from the Department of Education in South Africa.",
+            "what is star college durban": "**About Star College Durban**\n\nStar College Durban is an Independent, English Medium School established by Horizon Educational Trust.\n\nThe school follows the curriculum from the Department of Education and focuses on academic excellence, particularly in:\n\n• Mathematics\n• Science\n• Computer Technology\n\nStar College aims to be academically strong, producing excellent results in the National Matric exams as well as National and International Mathematics, Science and Computer Olympiads.",
+
+            "what is the mission of star college": "**Mission of Star College**\n\nThe mission of Star College is to enable all students to become the best possible version of themselves.\n\nThe school strives to create an environment where children develop into:\n\n• Empathetic individuals\n• Self-directed learners\n• Critical thinkers who persevere when faced with challenges\n\nAdditionally, they aim to be academically strong and produce excellent results in various national and international exams and competitions.",
+
+            "where is star college located": "**Location**\n\nStar College Durban is located at:\n\n20 Kinloch Avenue\nWestville North 3630\nDurban, South Africa",
+
+            "how can i contact star college": "**Contact Information**\n\nYou can reach Star College Durban through the following channels:\n\n**Phone Number:**\n+27 31 262 71 91\n\n**Email:**\nstarcollege@starcollege.co.za\n\n**Social Media:**\nThe school also maintains a presence on various platforms including Facebook, Instagram, Twitter, LinkedIn, and YouTube.",
+
+            "what programs does star college offer": "**Educational Programs**\n\nStar College offers a comprehensive education system that includes:\n\n• **Primary Education:** Little Dolphin Star and Pre-Primary School\n• **Secondary Education:** Separate high schools for boys and girls\n\nAll programs follow the curriculum from the Department of Education in South Africa, providing students with a strong academic foundation.",
         }
 
     def initialize(self) -> bool:
@@ -233,7 +237,7 @@ class MockProvider(BaseLLMProvider):
                 return value
 
         # Default response
-        return "I don't have enough information to answer that question."
+        return "**I don't have enough information**\n\nI'm sorry, but I don't have enough information in my database to answer that question about Star College Durban.\n\nFor more specific information, you might want to:\n\n• Visit the official Star College Durban website\n• Contact the school directly at +27 31 262 71 91\n• Email them at starcollege@starcollege.co.za"
 
 class DeepSeekProvider(BaseLLMProvider):
     """DeepSeek LLM provider"""
@@ -326,6 +330,15 @@ class DeepSeekProvider(BaseLLMProvider):
             {context_text}
 
             Question: {question}
+
+            Format your answer in a readable, user-friendly style following these guidelines:
+            1. Use proper paragraphs with line breaks between them
+            2. Use bullet points for lists
+            3. Use headers (with bold formatting) for different sections when appropriate
+            4. Keep paragraphs short and focused on one idea
+            5. Use a conversational, helpful tone
+            6. Organize information logically
+            7. Highlight important information
 
             Answer:
             """
