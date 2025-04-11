@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>StarBot Demo - Star College Durban Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            background-image: url('https://raw.githubusercontent.com/TUMO-MOGAME/starbot-resources/main/star_college_background.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.85);
+            z-index: -1;
+        }
+        h1 {
+            color: #c8a415;
+            text-align: center;
+            margin-bottom: 10px;
+            font-family: 'Segoe Script', cursive, sans-serif;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        .subtitle {
+            color: #424242;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .chat-container {
+            border: 2px solid #c8a415;
+            border-radius: 10px;
+            padding: 20px;
+            height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .user-message {
+            background-color: #f0d87a;
+            padding: 10px 15px;
+            border-radius: 18px;
+            margin-bottom: 15px;
+            max-width: 80%;
+            margin-left: auto;
+            margin-right: 10px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            border-left: 3px solid #c8a415;
+        }
+        .bot-message {
+            background-color: #e8f0ff;
+            padding: 10px 15px;
+            border-radius: 18px;
+            margin-bottom: 15px;
+            max-width: 80%;
+            margin-right: auto;
+            margin-left: 10px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            border-right: 3px solid #1a3c8a;
+        }
+        .input-container {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        #user-input {
+            flex-grow: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        #user-input:focus {
+            border-color: #c8a415;
+        }
+        #send-button {
+            padding: 12px 20px;
+            background-color: #c8a415;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        #send-button:hover {
+            background-color: #a88a10;
+        }
+        .loading {
+            text-align: center;
+            margin: 20px 0;
+            color: #666;
+        }
+        .loading-dots {
+            display: inline-block;
+        }
+        .loading-dots:after {
+            content: '.';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60% { content: '...'; }
+            80%, 100% { content: ''; }
+        }
+        .about {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border: 2px solid #c8a415;
+        }
+        .about h3 {
+            color: #1a3c8a;
+            margin-top: 0;
+            border-bottom: 2px solid #c8a415;
+            padding-bottom: 5px;
+            display: inline-block;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+        }
+        .command {
+            background-color: #1a3c8a;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+            border-left: 3px solid #c8a415;
+        }
+        .qa-pair {
+            margin-bottom: 20px;
+            border-left: 3px solid #c8a415;
+            padding-left: 15px;
+            background-color: rgba(240, 216, 122, 0.1);
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+        .question {
+            font-weight: bold;
+            color: #1a3c8a;
+        }
+        .answer {
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div style="text-align: center; margin-bottom: 20px;">
+        <img src="https://raw.githubusercontent.com/TUMO-MOGAME/starbot-resources/main/star_college_logo.png" alt="Star College Logo" style="height: 80px; margin-bottom: 10px;">
+        <h1>🤖 StarBot Demo</h1>
+        <p class="subtitle">A chatbot that answers questions about Star College Durban</p>
+    </div>
+
+    <div class="chat-container" id="chat-container">
+        <div class="bot-message">
+            <strong>StarBot:</strong> Hello! I'm StarBot. I can answer questions about Star College Durban. What would you like to know?
+        </div>
+    </div>
+
+    <div class="input-container">
+        <input type="text" id="user-input" placeholder="Ask a question about Star College Durban...">
+        <button id="send-button">Send</button>
+    </div>
+
+    <div id="loading" class="loading" style="display: none;">
+        <p>StarBot is thinking<span class="loading-dots"></span></p>
+    </div>
+
+    <div class="about">
+        <h3>About StarBot</h3>
+        <p><strong>StarBot</strong> is a chatbot that answers questions about Star College Durban using information from their website.</p>
+        <p><strong>Features:</strong></p>
+        <ul>
+            <li>Uses free LLM models via Ollama</li>
+            <li>Answers questions based only on provided data</li>
+            <li>Responds with "I don't have enough information" when the answer isn't in the data</li>
+        </ul>
+
+        <h3>Pre-answered Questions</h3>
+        <p>Since this is a static demo, here are some pre-answered questions:</p>
+
+        <div class="qa-pair">
+            <div class="question">What is Star College Durban?</div>
+            <div class="answer">Star College Durban is an Independent, English Medium School established by Horizon Educational Trust. It follows the curriculum from the Department of Education and aims to be academically strong, producing excellent results in the National Matric exams as well as National and International Mathematics, Science and Computer Olympiads.</div>
+        </div>
+
+        <div class="qa-pair">
+            <div class="question">What is the mission of Star College?</div>
+            <div class="answer">The mission of Star College is to enable all students to become the best possible version of themselves. They provide an environment where children develop into empathetic, self-directed, critical thinkers who do not give up when faced with challenges. Additionally, they aim to be academically strong and produce excellent results in various national and international exams and competitions.</div>
+        </div>
+
+        <div class="qa-pair">
+            <div class="question">Where is Star College located?</div>
+            <div class="answer">Star College Durban is located at 20 Kinloch Avenue, Westville North 3630, Durban, South Africa.</div>
+        </div>
+
+        <div class="qa-pair">
+            <div class="question">How can I contact Star College?</div>
+            <div class="answer">You can contact Star College Durban via their phone number which is +27 31 262 71 91 or through email at starcollege@starcollege.co.za. They also have a presence on social media platforms such as Facebook, Instagram, Twitter, LinkedIn, and YouTube.</div>
+        </div>
+
+        <h3>Running the Actual StarBot</h3>
+        <p>To use the actual StarBot with live responses, run the following command in PowerShell:</p>
+        <div class="command">python ask_starbot.py "Your question here"</div>
+        <p>For example:</p>
+        <div class="command">python ask_starbot.py "What programs does Star College offer?"</div>
+    </div>
+
+    <div class="footer">
+        <div style="margin-bottom: 10px;">
+            <span style="color: #c8a415; font-weight: bold;">STAR</span> <span style="color: #1a3c8a; font-weight: bold;">COLLEGE DURBAN</span>
+        </div>
+        Powered by Ollama, LangChain, and Python
+    </div>
+
+    <script>
+        // Pre-defined answers for demo purposes
+        const demoAnswers = {
+            "what is star college durban": "Star College Durban is an Independent, English Medium School established by Horizon Educational Trust. It follows the curriculum from the Department of Education and aims to be academically strong, producing excellent results in the National Matric exams as well as National and International Mathematics, Science and Computer Olympiads.",
+            "what is the mission of star college": "The mission of Star College is to enable all students to become the best possible version of themselves. They provide an environment where children develop into empathetic, self-directed, critical thinkers who do not give up when faced with challenges. Additionally, they aim to be academically strong and produce excellent results in various national and international exams and competitions.",
+            "where is star college located": "Star College Durban is located at 20 Kinloch Avenue, Westville North 3630, Durban, South Africa.",
+            "how can i contact star college": "You can contact Star College Durban via their phone number which is +27 31 262 71 91 or through email at starcollege@starcollege.co.za. They also have a presence on social media platforms such as Facebook, Instagram, Twitter, LinkedIn, and YouTube.",
+            "what programs does star college offer": "Based on the available information, Star College offers education for primary school (Little Dolphin Star and Pre-Primary School), as well as separate high schools for boys and girls. They follow the curriculum from the Department of Education in South Africa.",
+            "who is the principal of star college": "I don't have enough information to answer that question. The available data does not mention who the principal of Star College Durban is.",
+            "when was star college founded": "I don't have enough information to answer that question. The available data does not specify when Star College Durban was founded."
+        };
+
+        // Function to add a message to the chat
+        function addMessage(message, isUser) {
+            const chatContainer = document.getElementById('chat-container');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = isUser ? 'user-message' : 'bot-message';
+            messageDiv.innerHTML = `<strong>${isUser ? 'You' : 'StarBot'}:</strong> ${message}`;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Function to send a message
+        function sendMessage() {
+            const userInput = document.getElementById('user-input');
+            const message = userInput.value.trim();
+
+            if (message) {
+                // Add user message to chat
+                addMessage(message, true);
+
+                // Clear input
+                userInput.value = '';
+
+                // Show loading indicator
+                document.getElementById('loading').style.display = 'block';
+
+                // Simulate processing time
+                setTimeout(() => {
+                    // Hide loading indicator
+                    document.getElementById('loading').style.display = 'none';
+
+                    // Get answer from demo database or default response
+                    const questionLower = message.toLowerCase();
+                    let answer = "I don't have enough information to answer that question.";
+
+                    // Check for exact matches
+                    if (demoAnswers[questionLower]) {
+                        answer = demoAnswers[questionLower];
+                    } else {
+                        // Check for partial matches
+                        for (const key in demoAnswers) {
+                            if (questionLower.includes(key) || key.includes(questionLower)) {
+                                answer = demoAnswers[key];
+                                break;
+                            }
+                        }
+                    }
+
+                    // Add bot response to chat
+                    addMessage(answer, false);
+                }, 1500);
+            }
+        }
+
+        // Event listeners
+        document.getElementById('send-button').addEventListener('click', sendMessage);
+        document.getElementById('user-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
