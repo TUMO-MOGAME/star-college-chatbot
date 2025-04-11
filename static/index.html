@@ -168,6 +168,10 @@
         Connecting to StarBot server...
     </div>
 
+    <div id="mode-indicator" style="text-align: center; margin-bottom: 10px; font-size: 14px; color: #666; display: none;">
+        Running in <span id="mode-text">unknown</span> mode
+    </div>
+
     <div class="chat-container" id="chat-container">
         <div class="bot-message">
             <strong>StarBot:</strong> Hello! I'm StarBot. I can answer questions about Star College Durban. What would you like to know?
@@ -216,10 +220,31 @@
         const serverStatus = document.getElementById('server-status');
         const userInput = document.getElementById('user-input');
         const sendButton = document.getElementById('send-button');
-        
+        const modeIndicator = document.getElementById('mode-indicator');
+        const modeText = document.getElementById('mode-text');
+        let currentMode = 'unknown';
+
+        // Function to update the mode indicator
+        function updateModeIndicator(mode) {
+            currentMode = mode;
+            modeText.textContent = mode;
+            modeIndicator.style.display = 'block';
+
+            // Add color based on mode
+            if (mode === 'openai') {
+                modeText.style.color = '#10a37f'; // OpenAI green
+            } else if (mode === 'ollama') {
+                modeText.style.color = '#4285f4'; // Blue
+            } else if (mode === 'mock') {
+                modeText.style.color = '#f4b400'; // Yellow/gold
+            } else if (mode === 'error') {
+                modeText.style.color = '#db4437'; // Red
+            }
+        }
+
         // Initialize StarBot when the page loads
         serverStatus.style.display = 'block';
-        
+
         fetch(`${API_URL}/initialize`)
             .then(response => {
                 if (!response.ok) {
@@ -231,11 +256,14 @@
                 console.log(data.message);
                 serverStatus.textContent = 'StarBot is ready!';
                 serverStatus.classList.add('success');
-                
+
+                // Update mode indicator
+                updateModeIndicator(data.mode || 'unknown');
+
                 // Enable input after initialization
                 userInput.disabled = false;
                 sendButton.disabled = false;
-                
+
                 // Hide status after 3 seconds
                 setTimeout(() => {
                     serverStatus.style.display = 'none';
@@ -245,8 +273,9 @@
                 console.error('Error initializing StarBot:', error);
                 serverStatus.textContent = 'Error connecting to StarBot server. Please try again later.';
                 serverStatus.classList.add('error');
+                updateModeIndicator('error');
             });
-        
+
         // Function to add a message to the chat
         function addMessage(message, isUser) {
             const chatContainer = document.getElementById('chat-container');
@@ -256,25 +285,25 @@
             chatContainer.appendChild(messageDiv);
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
-        
+
         // Function to send a message
         function sendMessage() {
             const message = userInput.value.trim();
-            
+
             if (message) {
                 // Add user message to chat
                 addMessage(message, true);
-                
+
                 // Clear input
                 userInput.value = '';
-                
+
                 // Disable input while processing
                 userInput.disabled = true;
                 sendButton.disabled = true;
-                
+
                 // Show loading indicator
                 document.getElementById('loading').style.display = 'block';
-                
+
                 // Send message to server
                 fetch(`${API_URL}/ask`, {
                     method: 'POST',
@@ -292,10 +321,15 @@
                 .then(data => {
                     // Hide loading indicator
                     document.getElementById('loading').style.display = 'none';
-                    
+
                     // Add bot response to chat
                     addMessage(data.answer, false);
-                    
+
+                    // Update mode indicator if it changed
+                    if (data.mode && data.mode !== currentMode) {
+                        updateModeIndicator(data.mode);
+                    }
+
                     // Re-enable input
                     userInput.disabled = false;
                     sendButton.disabled = false;
@@ -304,18 +338,18 @@
                 .catch(error => {
                     // Hide loading indicator
                     document.getElementById('loading').style.display = 'none';
-                    
+
                     // Add error message to chat
                     addMessage('Sorry, there was an error processing your request. Please try again.', false);
                     console.error('Error:', error);
-                    
+
                     // Re-enable input
                     userInput.disabled = false;
                     sendButton.disabled = false;
                 });
             }
         }
-        
+
         // Event listeners
         sendButton.addEventListener('click', sendMessage);
         userInput.addEventListener('keypress', function(e) {
