@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: star-college-chatbot
+    env: python
+    buildCommand: pip install -r requirements-server.txt
+    startCommand: gunicorn star_college_server:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.18

@@ -1,1 +1,1 @@
-web: gunicorn star_college_server:app
+web: bash build.sh && gunicorn star_college_server:app --log-file -
