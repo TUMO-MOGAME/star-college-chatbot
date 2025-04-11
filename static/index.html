@@ -69,6 +69,19 @@
             margin-left: 10px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
             border-right: 3px solid #1a3c8a;
+            line-height: 1.5;
+        }
+
+        .bot-message strong {
+            color: #1a3c8a;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+
+        .bot-message br {
+            display: block;
+            content: "";
+            margin-top: 5px;
         }
         .input-container {
             display: flex;
@@ -283,7 +296,21 @@
             const chatContainer = document.getElementById('chat-container');
             const messageDiv = document.createElement('div');
             messageDiv.className = isUser ? 'user-message' : 'bot-message';
-            messageDiv.innerHTML = `<strong>${isUser ? 'You' : 'StarBot'}:</strong> ${message}`;
+
+            // For bot messages, preserve formatting
+            if (!isUser) {
+                // Replace line breaks with <br> tags
+                const formattedMessage = message
+                    .replace(/\n\n/g, '<br><br>')
+                    .replace(/\n/g, '<br>')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/•/g, '&bull;');
+
+                messageDiv.innerHTML = `<strong>StarBot:</strong> ${formattedMessage}`;
+            } else {
+                messageDiv.innerHTML = `<strong>You:</strong> ${message}`;
+            }
+
             chatContainer.appendChild(messageDiv);
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
