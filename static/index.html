@@ -33,6 +33,8 @@
             left: 50%;
             transform: translate(-50%, -50%);
             object-fit: cover;
+            will-change: transform; /* Optimize for animations */
+            backface-visibility: hidden; /* Reduce flickering */
         }
 
         .overlay {
@@ -191,7 +193,8 @@
 <body>
     <div class="video-background">
         <video autoplay muted loop playsinline id="background-video">
-            <source src="/static/videos/203678-922748476.mp4" type="video/mp4">
+            <source src="/static/videos/final_video.mp4" type="video/mp4">
+            <source src="/static/videos/final_video.mov" type="video/quicktime">
             Your browser does not support the video tag.
         </video>
     </div>
