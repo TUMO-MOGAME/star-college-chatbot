@@ -12,6 +12,7 @@ from langchain_community.document_loaders import (
     DirectoryLoader,
     PyPDFLoader
 )
+from starbot.utils.image_loader import ImageLoader, DirectoryImageLoader
 from starbot.utils.web_loader import CustomWebLoader
 from langchain_community.vectorstores import Chroma
 from langchain_ollama import OllamaEmbeddings
@@ -105,19 +106,54 @@ class DataIngestion:
         documents = loader.load()
         return self.text_splitter.split_documents(documents)
 
+    def ingest_image(self, file_path: str, language: str = "eng") -> List:
+        """
+        Ingest a single image file and extract text using OCR
+
+        Args:
+            file_path: Path to the image file
+            language: Language for OCR (default: English)
+
+        Returns:
+            List of document chunks
+        """
+        loader = ImageLoader(file_path, language=language)
+        documents = loader.load()
+        return self.text_splitter.split_documents(documents)
+
+    def ingest_image_directory(self, directory_path: str, glob_pattern: str = "**/*.{jpg,jpeg,png,gif,bmp,tiff}", language: str = "eng") -> List:
+        """
+        Ingest all image files in a directory and extract text using OCR
+
+        Args:
+            directory_path: Path to the directory
+            glob_pattern: Pattern to match image files
+            language: Language for OCR (default: English)
+
+        Returns:
+            List of document chunks
+        """
+        loader = DirectoryImageLoader(directory_path, glob_pattern=glob_pattern, language=language)
+        documents = loader.load()
+        return self.text_splitter.split_documents(documents)
+
     def ingest_multiple_sources(self,
                                text_files: Optional[List[str]] = None,
                                pdf_files: Optional[List[str]] = None,
+                               image_files: Optional[List[str]] = None,
                                urls: Optional[List[str]] = None,
-                               directories: Optional[List[str]] = None) -> List:
+                               directories: Optional[List[str]] = None,
+                               image_directories: Optional[List[str]] = None) -> List:
         """
         Ingest multiple data sources
 
         Args:
             text_files: List of text file paths
             pdf_files: List of PDF file paths
+            image_files: List of image file paths for OCR text extraction
             urls: List of website URLs
-            directories: List of directory paths
+            directories: List of directory paths for text files
+            image_directories: List of directory paths for image files
 
         Returns:
             List of document chunks
@@ -139,6 +175,14 @@ class DataIngestion:
         if directories:
             for directory in directories:
                 all_documents.extend(self.ingest_directory(directory))
+
+        if image_files:
+            for file_path in image_files:
+                all_documents.extend(self.ingest_image(file_path))
+
+        if image_directories:
+            for directory in image_directories:
+                all_documents.extend(self.ingest_image_directory(directory))
 
         return all_documents
 
