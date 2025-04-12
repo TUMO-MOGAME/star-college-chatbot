@@ -8,6 +8,7 @@ import logging
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from dotenv import load_dotenv
+from image_content_manager import ImageContentManager
 
 # Load environment variables from .env file if it exists
 load_dotenv()
@@ -30,12 +31,13 @@ CORS(app)  # Enable CORS for all routes
 # Initialize components
 llm_provider = None
 data_retriever = None
+image_manager = None
 initialized = False
 provider_type = None
 
 def initialize_starbot():
     """Initialize StarBot components"""
-    global llm_provider, data_retriever, initialized, provider_type
+    global llm_provider, data_retriever, image_manager, initialized, provider_type
 
     if not initialized:
         try:
@@ -74,6 +76,10 @@ def initialize_starbot():
             logger.info("Initializing data retriever...")
             data_retriever = DataRetriever()
             data_retriever.initialize()
+
+            # Initialize the image content manager
+            logger.info("Initializing image content manager...")
+            image_manager = ImageContentManager()
 
             logger.info(f"StarBot initialized with {provider_type} provider")
             initialized = True
@@ -136,10 +142,21 @@ def ask():
         logger.info(f"Using {provider_type} provider for question: {question}")
         answer = llm_provider.answer_question(question, context)
 
-        return jsonify({
-            "answer": answer,
-            "mode": provider_type
-        })
+        # Enhance response with images if applicable
+        if image_manager:
+            enhanced_response = image_manager.enhance_response_with_images(question, answer)
+            return jsonify({
+                "answer": enhanced_response["text"],
+                "has_images": enhanced_response["has_images"],
+                "images": enhanced_response.get("images", []),
+                "mode": provider_type
+            })
+        else:
+            return jsonify({
+                "answer": answer,
+                "has_images": False,
+                "mode": provider_type
+            })
     except Exception as e:
         logger.error(f"Error answering question: {e}")
         return jsonify({

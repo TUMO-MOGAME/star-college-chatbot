@@ -1,0 +1,71 @@
+{
+  "locations": [
+    {
+      "name": "Main Campus",
+      "description": "The main campus of Star College Durban, featuring modern classrooms and facilities.",
+      "image": "campus_main.jpg",
+      "keywords": ["main campus", "campus", "school building", "location", "main building", "headquarters"]
+    },
+    {
+      "name": "Science Laboratory",
+      "description": "State-of-the-art science laboratory equipped with modern equipment for practical experiments.",
+      "image": "science.jpg",
+      "keywords": ["science lab", "laboratory", "science laboratory", "physics lab", "chemistry lab", "biology lab"]
+    },
+    {
+      "name": "Computer Lab",
+      "description": "Computer laboratory with the latest technology for IT education.",
+      "image": "computer_lab.jpg",
+      "keywords": ["computer lab", "it lab", "computer room", "it room", "computer laboratory"]
+    },
+    {
+      "name": "Library",
+      "description": "Extensive library with a wide collection of books, journals, and digital resources.",
+      "image": "library.jpg",
+      "keywords": ["library", "book room", "study area", "reading room"]
+    },
+    {
+      "name": "Sports Field",
+      "description": "Large sports field for various outdoor activities and sports events.",
+      "image": "sports_field.jpg",
+      "keywords": ["sports field", "playground", "field", "sports ground", "soccer field", "football field"]
+    }
+  ],
+  "students": [
+    {
+      "name": "Ahmed Khan",
+      "achievement": "Top performer in Mathematics Olympiad 2023",
+      "grade": "Grade 12",
+      "image": "students.jpg",
+      "keywords": ["top student", "best student", "mathematics", "math olympiad", "olympiad winner", "ahmed", "khan"]
+    },
+    {
+      "name": "Priya Naidoo",
+      "achievement": "National Science Fair Gold Medalist",
+      "grade": "Grade 11",
+      "image": "science.jpg",
+      "keywords": ["science fair", "gold medal", "science achievement", "top scientist", "priya", "naidoo"]
+    },
+    {
+      "name": "David Zuma",
+      "achievement": "Chess Champion and International Master",
+      "grade": "Grade 10",
+      "image": "chess.jpg",
+      "keywords": ["chess", "champion", "international master", "chess tournament", "david", "zuma"]
+    },
+    {
+      "name": "Fatima Ismail",
+      "achievement": "Published Author and Literary Award Winner",
+      "grade": "Grade 12",
+      "image": "students.jpg",
+      "keywords": ["author", "writer", "literary award", "published", "book", "fatima", "ismail"]
+    },
+    {
+      "name": "Michael Ndlovu",
+      "achievement": "National Debate Competition Winner",
+      "grade": "Grade 11",
+      "image": "students.jpg",
+      "keywords": ["debate", "public speaking", "competition winner", "national debate", "michael", "ndlovu"]
+    }
+  ]
+}

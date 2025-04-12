@@ -92,6 +92,21 @@
             line-height: 1.5;
         }
 
+        .message-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 1px solid #c8a415;
+        }
+
+        .image-caption {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
         .bot-message strong {
             color: #1a3c8a;
             margin-bottom: 5px;
@@ -321,7 +336,7 @@
             });
 
         // Function to add a message to the chat
-        function addMessage(message, isUser) {
+        function addMessage(message, isUser, imageData) {
             const chatContainer = document.getElementById('chat-container');
             const messageDiv = document.createElement('div');
             messageDiv.className = isUser ? 'user-message' : 'bot-message';
@@ -336,6 +351,28 @@
                     .replace(/•/g, '&bull;');
 
                 messageDiv.innerHTML = `<strong>StarBot:</strong> ${formattedMessage}`;
+
+                // Add image if available
+                if (imageData && imageData.url) {
+                    const imageContainer = document.createElement('div');
+
+                    // Create image element
+                    const img = document.createElement('img');
+                    img.src = imageData.url;
+                    img.alt = imageData.caption || 'Image';
+                    img.className = 'message-image';
+                    imageContainer.appendChild(img);
+
+                    // Add caption if available
+                    if (imageData.caption) {
+                        const caption = document.createElement('div');
+                        caption.className = 'image-caption';
+                        caption.textContent = imageData.caption;
+                        imageContainer.appendChild(caption);
+                    }
+
+                    messageDiv.appendChild(imageContainer);
+                }
             } else {
                 messageDiv.innerHTML = `<strong>You:</strong> ${message}`;
             }
@@ -380,8 +417,9 @@
                     // Hide loading indicator
                     document.getElementById('loading').style.display = 'none';
 
-                    // Add bot response to chat
-                    addMessage(data.answer, false);
+                    // Add bot response to chat with image if available
+                    const imageData = data.has_images && data.images && data.images.length > 0 ? data.images[0] : null;
+                    addMessage(data.answer, false, imageData);
 
                     // Update mode indicator if it changed
                     if (data.mode && data.mode !== currentMode) {
