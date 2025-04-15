@@ -99,7 +99,23 @@ def initialize_starbot():
 @app.route('/')
 def home():
     """Serve the HTML file"""
-    return send_from_directory('static', 'index.html')
+    # Check if the avatar version is requested
+    use_avatar = request.args.get('avatar', 'false').lower() == 'true'
+
+    if use_avatar:
+        return send_from_directory('static', 'index_with_avatar.html')
+    else:
+        return send_from_directory('static', 'index.html')
+
+@app.route('/avatar')
+def avatar_version():
+    """Serve the avatar version of the HTML file"""
+    return send_from_directory('static', 'index_with_avatar.html')
+
+@app.route('/try-avatar')
+def try_avatar():
+    """Serve the try avatar page"""
+    return send_from_directory('static', 'try_avatar.html')
 
 @app.route('/static/<path:path>')
 def serve_static(path):
