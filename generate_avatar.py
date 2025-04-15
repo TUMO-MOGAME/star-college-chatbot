@@ -6,7 +6,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 def generate_avatar(filename, width=600, height=600, bg_color=(30, 60, 120), text_color=(255, 255, 255)):
     """
-    Generate a placeholder avatar image
+    Generate a professional avatar image
 
     Args:
         filename: Output filename
@@ -15,7 +15,42 @@ def generate_avatar(filename, width=600, height=600, bg_color=(30, 60, 120), tex
         bg_color: Background color (RGB tuple)
         text_color: Text color (RGB tuple)
     """
-    # Create a new image with the given background color
+    # Try to use the student image if available
+    student_image_path = "static/images/student_avatar.jpg"
+
+    if os.path.exists(student_image_path):
+        try:
+            # Open the student image
+            img = Image.open(student_image_path)
+
+            # Resize the image while maintaining aspect ratio
+            img_width, img_height = img.size
+            aspect_ratio = img_width / img_height
+
+            if aspect_ratio > 1:  # Width > Height
+                new_width = width
+                new_height = int(new_width / aspect_ratio)
+            else:  # Height >= Width
+                new_height = height
+                new_width = int(new_height * aspect_ratio)
+
+            img = img.resize((new_width, new_height), Image.LANCZOS)
+
+            # Create a new image with the target size and paste the resized image centered
+            new_img = Image.new("RGB", (width, height), bg_color)
+            paste_x = (width - new_width) // 2
+            paste_y = (height - new_height) // 2
+            new_img.paste(img, (paste_x, paste_y))
+
+            # Save the processed image
+            new_img.save(filename)
+            print(f"Student avatar saved to {filename}")
+            return
+        except Exception as e:
+            print(f"Error processing student image: {e}")
+            print("Falling back to generated avatar...")
+
+    # If student image is not available or processing fails, create a placeholder avatar
     image = Image.new('RGB', (width, height), bg_color)
     draw = ImageDraw.Draw(image)
 
