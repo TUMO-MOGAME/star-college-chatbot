@@ -7,7 +7,7 @@ from PIL import Image, ImageDraw, ImageFont
 def generate_avatar(filename, width=600, height=600, bg_color=(30, 60, 120), text_color=(255, 255, 255)):
     """
     Generate a placeholder avatar image
-    
+
     Args:
         filename: Output filename
         width: Image width
@@ -18,7 +18,7 @@ def generate_avatar(filename, width=600, height=600, bg_color=(30, 60, 120), tex
     # Create a new image with the given background color
     image = Image.new('RGB', (width, height), bg_color)
     draw = ImageDraw.Draw(image)
-    
+
     # Draw a circle for the face
     face_radius = width // 3
     face_center = (width // 2, height // 2)
@@ -29,12 +29,12 @@ def generate_avatar(filename, width=600, height=600, bg_color=(30, 60, 120), tex
         face_center[1] + face_radius
     )
     draw.ellipse(face_bbox, fill=(240, 220, 180))
-    
+
     # Draw eyes
     eye_radius = face_radius // 5
     left_eye_center = (face_center[0] - face_radius // 2, face_center[1] - face_radius // 4)
     right_eye_center = (face_center[0] + face_radius // 2, face_center[1] - face_radius // 4)
-    
+
     # Eye whites
     draw.ellipse((
         left_eye_center[0] - eye_radius,
@@ -42,14 +42,14 @@ def generate_avatar(filename, width=600, height=600, bg_color=(30, 60, 120), tex
         left_eye_center[0] + eye_radius,
         left_eye_center[1] + eye_radius
     ), fill=(255, 255, 255))
-    
+
     draw.ellipse((
         right_eye_center[0] - eye_radius,
         right_eye_center[1] - eye_radius,
         right_eye_center[0] + eye_radius,
         right_eye_center[1] + eye_radius
     ), fill=(255, 255, 255))
-    
+
     # Pupils
     pupil_radius = eye_radius // 2
     draw.ellipse((
@@ -58,19 +58,19 @@ def generate_avatar(filename, width=600, height=600, bg_color=(30, 60, 120), tex
         left_eye_center[0] + pupil_radius,
         left_eye_center[1] + pupil_radius
     ), fill=(0, 0, 0))
-    
+
     draw.ellipse((
         right_eye_center[0] - pupil_radius,
         right_eye_center[1] - pupil_radius,
         right_eye_center[0] + pupil_radius,
         right_eye_center[1] + pupil_radius
     ), fill=(0, 0, 0))
-    
+
     # Draw a smile
     smile_start = (face_center[0] - face_radius // 2, face_center[1] + face_radius // 4)
     smile_end = (face_center[0] + face_radius // 2, face_center[1] + face_radius // 4)
     smile_control = (face_center[0], face_center[1] + face_radius // 2)
-    
+
     # Draw a curved smile using a quadratic bezier curve approximation
     points = []
     steps = 20
@@ -80,22 +80,35 @@ def generate_avatar(filename, width=600, height=600, bg_color=(30, 60, 120), tex
         x = (1-t)**2 * smile_start[0] + 2*(1-t)*t*smile_control[0] + t**2*smile_end[0]
         y = (1-t)**2 * smile_start[1] + 2*(1-t)*t*smile_control[1] + t**2*smile_end[1]
         points.append((x, y))
-    
+
     # Draw the smile with a thicker line
     for i in range(len(points) - 1):
         draw.line([points[i], points[i+1]], fill=(0, 0, 0), width=5)
-    
+
     # Add text "StarBot" at the bottom
     try:
         font = ImageFont.truetype("arial.ttf", 40)
     except IOError:
         font = ImageFont.load_default()
-    
+
     text = "StarBot"
-    text_width, text_height = draw.textsize(text, font=font)
+    # In newer PIL versions, textsize is deprecated
+    try:
+        # For newer PIL versions
+        text_bbox = draw.textbbox((0, 0), text, font=font)
+        text_width = text_bbox[2] - text_bbox[0]
+        text_height = text_bbox[3] - text_bbox[1]
+    except AttributeError:
+        # Fallback for older PIL versions
+        try:
+            text_width, text_height = draw.textsize(text, font=font)
+        except AttributeError:
+            # If all else fails, use estimated size
+            text_width, text_height = len(text) * 20, 40
+
     text_position = ((width - text_width) // 2, height - text_height - 20)
     draw.text(text_position, text, font=font, fill=text_color)
-    
+
     # Save the image
     image.save(filename)
     print(f"Generated avatar image: {filename}")
@@ -107,7 +120,7 @@ def main():
     # Create the output directory if it doesn't exist
     output_dir = "static/images"
     os.makedirs(output_dir, exist_ok=True)
-    
+
     # Generate avatar image
     output_path = os.path.join(output_dir, "avatar.png")
     generate_avatar(output_path)
