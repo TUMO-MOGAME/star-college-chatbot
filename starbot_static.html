@@ -123,99 +123,55 @@
             margin: 10px 0;
         }
 
-        /* Avatar styles */
+        /* Main content styles */
         .main-content {
             display: flex;
-            gap: 20px;
+            flex-direction: column;
             margin-bottom: 20px;
         }
 
-        .avatar-section {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        .principal-message {
             background-color: white;
             border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            border: 2px solid #1E88E5;
-        }
-
-        .avatar-container {
-            width: 250px;
-            height: 250px;
-            border-radius: 50%;
-            overflow: hidden;
-            margin-bottom: 20px;
-            border: 3px solid #1E88E5;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid #1E88E5;
+            margin-bottom: 30px;
             position: relative;
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
         }
 
-        .avatar-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .principal-message h2 {
+            color: #1E88E5;
+            margin-top: 0;
+            font-size: 24px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
         }
 
-        .avatar-status {
-            text-align: center;
+        .principal-message p {
+            margin-bottom: 15px;
+            text-align: justify;
+            color: #333;
+        }
+
+        .principal-signature {
+            margin-top: 25px;
+            font-style: italic;
             font-weight: bold;
             color: #1E88E5;
-            margin-top: 10px;
         }
 
         .chat-section {
-            flex: 2;
-        }
-
-        /* Avatar animation */
-        @keyframes talking {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .avatar-talking {
-            animation: talking 0.5s infinite;
-        }
-
-        .avatar-mouth {
-            position: absolute;
-            bottom: 30%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40px;
-            height: 20px;
-            background-color: #333;
-            border-radius: 0 0 20px 20px;
-            display: none;
-        }
-
-        .avatar-mouth.talking {
-            display: block;
-            animation: mouth-move 0.3s infinite alternate;
-        }
-
-        @keyframes mouth-move {
-            0% { height: 5px; }
-            100% { height: 15px; }
+            width: 100%;
         }
 
         /* Responsive design */
         @media (max-width: 768px) {
-            .main-content {
-                flex-direction: column;
-            }
-
-            .avatar-section {
-                margin-bottom: 20px;
-            }
-
-            .avatar-container {
-                width: 200px;
-                height: 200px;
+            .principal-message {
+                padding: 20px;
             }
         }
     </style>
@@ -225,12 +181,22 @@
     <p class="subtitle">A chatbot that answers questions about Star College Durban</p>
 
     <div class="main-content">
-        <div class="avatar-section">
-            <div class="avatar-container" id="avatar-container">
-                <img src="static/images/student_avatar.jpg" alt="StarBot Avatar" class="avatar-image" id="avatar-image">
-                <div class="avatar-mouth" id="avatar-mouth"></div>
+        <div class="principal-message">
+            <h2>Principal's Message</h2>
+            <p>I am honoured and privileged to function as the principal of Star College, Durban. At Star College we ensure high quality education which motivates and empowers our students to be lifelong learners and productive members of society.</p>
+
+            <p>Our holistic approach allows our students to achieve their full potential. A structured curriculum along with this approach allows for recognition of our student's achievements. At Star College we firmly believe that the parents are their child's first and most important teacher. Parents play a vital role in the education of their children. We happily welcome all parents to take an active role in the education of their children and to be active participants in our school life. The triad platform is vital for the success of each student. Parents, teachers and child have equal responsibility to work together to produce a well-balanced student with sustainable goals.</p>
+
+            <p>Our school strives to embrace our teachers, parents and students to provide a healthy and safe educational environment in which our students can excel and succeed.</p>
+
+            <p>With a long and rewarding history of excellence and achievement in education, our school continues to walk forward together with confidence, enthusiasm and pride.</p>
+
+            <p>I welcome you to join our school on the best academic walk that we can offer.</p>
+
+            <div class="principal-signature">
+                <p>Yours sincerely,</p>
+                <p>A KAYYA<br>Principal</p>
             </div>
-            <div class="avatar-status" id="avatar-status">StarBot is ready to help!</div>
         </div>
 
         <div class="chat-section">
@@ -276,31 +242,7 @@
     </div>
 
     <script>
-        // Get avatar elements
-        const avatarImage = document.getElementById('avatar-image');
-        const avatarMouth = document.getElementById('avatar-mouth');
-        const avatarStatus = document.getElementById('avatar-status');
-        let isTalking = false;
-
-        // Function to start avatar talking animation
-        function startTalking() {
-            if (!isTalking) {
-                isTalking = true;
-                avatarImage.classList.add('avatar-talking');
-                avatarMouth.classList.add('talking');
-                avatarStatus.textContent = "StarBot is talking...";
-            }
-        }
-
-        // Function to stop avatar talking animation
-        function stopTalking() {
-            if (isTalking) {
-                isTalking = false;
-                avatarImage.classList.remove('avatar-talking');
-                avatarMouth.classList.remove('talking');
-                avatarStatus.textContent = "StarBot is ready to help!";
-            }
-        }
+        // No avatar elements or animation needed
 
         // Function to add a message to the chat
         function addMessage(message, isUser) {
@@ -309,9 +251,6 @@
             messageDiv.className = isUser ? 'user-message' : 'bot-message';
 
             if (!isUser) {
-                // Start talking animation for bot messages
-                startTalking();
-
                 // Format the message with line breaks and formatting
                 const formattedMessage = message
                     .replace(/\n\n/g, '<br><br>')
@@ -321,14 +260,7 @@
 
                 messageDiv.innerHTML = `<strong>StarBot:</strong> ${formattedMessage}`;
 
-                // Calculate approximate reading time (5 words per second)
-                const wordCount = message.split(/\s+/).length;
-                const readingTimeMs = Math.max(2000, wordCount * 200); // Minimum 2 seconds
-
-                // Stop talking after the estimated reading time
-                setTimeout(() => {
-                    stopTalking();
-                }, readingTimeMs);
+                // No need for talking animation timing
             } else {
                 messageDiv.innerHTML = `<strong>You:</strong> ${message}`;
             }
@@ -371,12 +303,9 @@
             }
         });
 
-        // Start talking animation when the page loads, then stop after 3 seconds
+        // Page load event
         document.addEventListener('DOMContentLoaded', function() {
-            startTalking();
-            setTimeout(() => {
-                stopTalking();
-            }, 3000);
+            // Initialize any needed functionality here
         });
     </script>
 </body>
